@@ -22,13 +22,23 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //权限申请
     apt 'com.zhy:mpermission-compiler:1.0.0'
     compile 'com.zhy:mpermission-api:1.0.0'
+    //扫描二维码
     compile 'cn.yipianfengye.android:zxing-library:2.1'
+    //选择图片
+    compile 'com.facebook.fresco:fresco:0.6.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //rxgalleryfinal依赖appcompat-v7和recyclerview-v7扩展卡库
+    compile 'cn.finalteam.rxgalleryfinal:library:0.0.3'
+    compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'com.android.support:appcompat-v7:23.4.0'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:23.4.0'
+
     testCompile 'junit:junit:4.12'
 }

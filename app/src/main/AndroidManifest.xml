@@ -27,6 +27,16 @@
             android:theme="@style/AppTheme"/>
         <activity android:name=".ActivityselfDefineScanUI"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <!--用于从图库中选择图片-->
+        <activity
+            android:name="cn.finalteam.rxgalleryfinal.ui.activity.MediaActivity"
+            android:screenOrientation="portrait"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>
