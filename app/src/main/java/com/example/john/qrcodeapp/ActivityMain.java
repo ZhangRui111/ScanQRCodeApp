@@ -2,6 +2,8 @@ package com.example.john.qrcodeapp;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,11 +19,14 @@ import com.zhy.m.permission.PermissionGrant;
 
 public class ActivityMain extends AppCompatActivity implements View.OnClickListener {
 
-    private Button permissionBtn, scanQRBtn;
+    private Button permissionBtn, scanQRcodeBtn, scanQRcodeFromGalleyBtn;
+
     //permission:android.permission.CAMERA权限码
-    private static final int REQUECT_CODE_CAMERA = 1;
-    //REQUEST_CODE:扫描成功返回码
+    private static final int REQUECT_CODE_CAMERA = 101;
+    //REQUEST_CODE
     private static final int REQUEST_CODE = 200;
+    //选择系统图片Request Code
+    public static final int REQUEST_IMAGE = 112;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +40,29 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        permissionBtn = (Button) findViewById(R.id.button_permission);
-        scanQRBtn = (Button) findViewById(R.id.button_scan_QR);
+        //permissionBtn = (Button) findViewById(R.id.button_permission);
+        scanQRcodeBtn = (Button) findViewById(R.id.button_scan_QR);
+        scanQRcodeFromGalleyBtn = (Button) findViewById(R.id.button_scan_QR_from_galley);
     }
 
 
     private void initAction() {
-        permissionBtn.setOnClickListener(this);
-        scanQRBtn.setOnClickListener(this);
+        //permissionBtn.setOnClickListener(this);
+        scanQRcodeBtn.setOnClickListener(this);
+        scanQRcodeFromGalleyBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_permission:
+            /*case R.id.button_permission:
                 getCameraPermission();
-                break;
+                break;*/
             case R.id.button_scan_QR:
-                funcScanQR();
+                funcScanQRcode();
+                break;
+            case R.id.button_scan_QR_from_galley:
+                funcScanQRcodeFromGalley();
                 break;
             default:
                 break;
@@ -60,9 +70,23 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 扫描二维码
+     * 从图库中选取二维码扫描
      */
-    private void funcScanQR() {
+    private void funcScanQRcodeFromGalley() {
+        //获取拍照权限
+        getCameraPermission();
+
+        MPermissions.requestPermissions(ActivityMain.this, REQUECT_CODE_CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    /**
+     * 扫描二维码获得信息
+     */
+    private void funcScanQRcode() {
         Intent intent = new Intent(ActivityMain.this, CaptureActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
@@ -93,6 +117,27 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
+            //从图库中选取扫描图片
+            case REQUEST_IMAGE:
+                if (data != null) {
+                    Uri uri = data.getData();
+                    try {
+                        CodeUtils.analyzeBitmap(ImageUtil.getImageAbsolutePath(this, uri), new CodeUtils.AnalyzeCallback() {
+                            @Override
+                            public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
+                                Toast.makeText(ActivityMain.this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onAnalyzeFailed() {
+                                Toast.makeText(ActivityMain.this, "解析二维码失败", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
             default:
                 break;
         }
@@ -111,12 +156,12 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
     @PermissionGrant(REQUECT_CODE_CAMERA)
     public void requestSdcardSuccess()
     {
-        Toast.makeText(this, "GRANT ACCESS CAMERA!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "GRANT ACCESS PERMISSION！", Toast.LENGTH_SHORT).show();
     }
 
     @PermissionDenied(REQUECT_CODE_CAMERA)
     public void requestSdcardFailed()
     {
-        Toast.makeText(this, "DENY ACCESS CAMERA!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "DENY ACCESS PERMISSION!", Toast.LENGTH_SHORT).show();
     }
 }

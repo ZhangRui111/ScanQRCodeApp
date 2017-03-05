@@ -14,11 +14,21 @@
     <Button
         android:id="@+id/button_permission"
         android:text="申请权限"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/button_scan_QR"
         android:text="扫描二维码"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/button_scan_QR_from_galley"
+        android:text="从图库中选择图片"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <!--<Button
+        android:id="@+id/button_scan_QR_"
+        android:text="扫描二维码"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />-->
 </LinearLayout>
