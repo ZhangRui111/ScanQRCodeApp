@@ -19,7 +19,7 @@ import com.zhy.m.permission.PermissionGrant;
 
 public class ActivityMain extends AppCompatActivity implements View.OnClickListener {
 
-    private Button permissionBtn, scanQRcodeBtn, scanQRcodeFromGalleyBtn;
+    private Button permissionBtn, scanQRcodeBtn, scanQRcodeFromGalleyBtn, scanSelfDefineUIBtn;
 
     //permission:android.permission.CAMERA权限码
     private static final int REQUECT_CODE_CAMERA = 101;
@@ -43,6 +43,7 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
         //permissionBtn = (Button) findViewById(R.id.button_permission);
         scanQRcodeBtn = (Button) findViewById(R.id.button_scan_QR);
         scanQRcodeFromGalleyBtn = (Button) findViewById(R.id.button_scan_QR_from_galley);
+        scanSelfDefineUIBtn = (Button) findViewById(R.id.button_scan_QR_self_define);
     }
 
 
@@ -50,6 +51,7 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
         //permissionBtn.setOnClickListener(this);
         scanQRcodeBtn.setOnClickListener(this);
         scanQRcodeFromGalleyBtn.setOnClickListener(this);
+        scanSelfDefineUIBtn.setOnClickListener(this);
     }
 
     @Override
@@ -64,9 +66,20 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
             case R.id.button_scan_QR_from_galley:
                 funcScanQRcodeFromGalley();
                 break;
+            case R.id.button_scan_QR_self_define:
+                funcSelfDefineUI();
+                break;
             default:
                 break;
         }
+    }
+
+    /**
+     * 扫描二维码获得信息
+     */
+    private void funcScanQRcode() {
+        Intent intent = new Intent(ActivityMain.this, CaptureActivity.class);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     /**
@@ -84,10 +97,10 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 扫描二维码获得信息
+     * 自定义扫描界面UI
      */
-    private void funcScanQRcode() {
-        Intent intent = new Intent(ActivityMain.this, CaptureActivity.class);
+    private void funcSelfDefineUI() {
+        Intent intent = new Intent(ActivityMain.this, ActivityselfDefineScanUI.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -112,6 +125,8 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
                     if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                         String result = bundle.getString(CodeUtils.RESULT_STRING);
                         Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+
+                        funcOpenURL(result);
                     } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                         Toast.makeText(ActivityMain.this, "解析二维码失败", Toast.LENGTH_LONG).show();
                     }
@@ -126,6 +141,7 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
                                 Toast.makeText(ActivityMain.this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                                funcOpenURL(result);
                             }
 
                             @Override
@@ -141,6 +157,15 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    /**
+     * 打开网页
+     */
+    private void funcOpenURL(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent .setData(Uri.parse(url));
+        startActivity(intent);
     }
 
     /**
